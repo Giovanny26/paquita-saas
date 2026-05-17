@@ -18,8 +18,11 @@ export default function Register() {
     try {
       await register(email, password, name);
       navigate('/dashboard');
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al registrarse');
+    } catch (err: unknown) {
+      const msg =
+        (err as { response?: { data?: { error?: string } } })?.response?.data?.error ??
+        'Error al registrarse';
+      setError(msg);
     } finally {
       setLoading(false);
     }

@@ -1,14 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import api from '../lib/axios';
-
-interface User {
-  id: string;
-  email: string;
-  name: string | null;
-  plan: string;
-  credits: number;
-}
+import { authApi } from '../api/auth.api';
+import type { User } from '../types';
 
 interface AuthState {
   user: User | null;
@@ -28,15 +21,13 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
 
       login: async (email, password) => {
-        const res = await api.post('/auth/login', { email, password });
-        const { user, token } = res.data;
+        const { user, token } = await authApi.login(email, password);
         localStorage.setItem('token', token);
         set({ user, token, isAuthenticated: true });
       },
 
       register: async (email, password, name) => {
-        const res = await api.post('/auth/register', { email, password, name });
-        const { user, token } = res.data;
+        const { user, token } = await authApi.register(email, password, name);
         localStorage.setItem('token', token);
         set({ user, token, isAuthenticated: true });
       },
@@ -47,13 +38,18 @@ export const useAuthStore = create<AuthState>()(
       },
 
       fetchMe: async () => {
-        const res = await api.get('/auth/me');
-        set({ user: res.data.user, isAuthenticated: true });
+        const { user } = await authApi.me();
+        set({ user });
       },
     }),
     {
       name: 'auth-storage',
-      partialize: (state) => ({ token: state.token, user: state.user }),
+      // isAuthenticated se persiste para que PrivateRoute funcione al recargar la página
+      partialize: (state) => ({
+        token: state.token,
+        user: state.user,
+        isAuthenticated: state.isAuthenticated,
+      }),
     }
   )
 );

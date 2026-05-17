@@ -17,8 +17,11 @@ export default function Login() {
     try {
       await login(email, password);
       navigate('/dashboard');
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al iniciar sesión');
+    } catch (err: unknown) {
+      const msg =
+        (err as { response?: { data?: { error?: string } } })?.response?.data?.error ??
+        'Error al iniciar sesión';
+      setError(msg);
     } finally {
       setLoading(false);
     }
