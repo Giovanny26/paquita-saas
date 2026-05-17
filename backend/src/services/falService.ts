@@ -1,4 +1,9 @@
 import { fal } from '@fal-ai/client';
+import axios from 'axios';
+
+const VAST_API_URL = process.env.VAST_API_URL;
+
+
 
 fal.config({
   credentials: process.env.FAL_API_KEY!,
@@ -22,17 +27,6 @@ export const textToImage = async (prompt: string, isNsfw: boolean = false) => {
     console.log('FAL ERROR DETAIL:', JSON.stringify(error.body, null, 2));
     throw error;
   }
-};
-
-export const testFluxNsfw = async () => {
-  const result = await fal.subscribe('fal-ai/flux-lora', {
-    input: {
-      prompt: 'nude woman standing on tropical beach, full body, photorealistic, 8k, highly detailed, natural lighting, anatomically correct',
-      enable_safety_checker: false,
-      num_images: 1,
-    } as any,
-  });
-  return result.data;
 };
 
 // Image to Image
@@ -88,4 +82,23 @@ export const generateAvatarFaces = async (options: {
   });
 
   return result.data;
+};
+
+
+// NSFW Text to Image via Vast.ai (Qwen self-hosted)
+export const textToImageNsfw = async (prompt: string) => {
+  const res = await axios.post(`${VAST_API_URL}/text-to-image`, {
+    prompt,
+    num_inference_steps: 28,
+  });
+  return { images: [{ url: `data:image/png;base64,${res.data.image_base64}` }] };
+};
+
+// NSFW Image to Image via Vast.ai (Qwen self-hosted)
+export const imageToImageNsfw = async (prompt: string, imageUrl: string) => {
+  const res = await axios.post(`${VAST_API_URL}/image-to-image`, {
+    prompt,
+    image_url: imageUrl,
+  });
+  return { images: [{ url: `data:image/png;base64,${res.data.image_base64}` }] };
 };

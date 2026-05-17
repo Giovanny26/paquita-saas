@@ -4,6 +4,8 @@ import {
   textToImage,
   imageToImage,
   imageToVideo,
+  textToImageNsfw,
+  imageToImageNsfw
 } from "../services/falService";
 
 const CREDITS_COST = {
@@ -39,7 +41,9 @@ export const generateTextToImage = async (req: Request, res: Response) => {
     console.log("user plan:", user.plan);
 
     // Generate
-    const result = (await textToImage(prompt, isNsfw)) as any;
+    const result = isNsfw
+      ? ((await textToImageNsfw(prompt)) as any)
+      : ((await textToImage(prompt, isNsfw)) as any);
     const imageUrl = result?.images?.[0]?.url || result?.image?.url;
 
     // Save generation & deduct credits
