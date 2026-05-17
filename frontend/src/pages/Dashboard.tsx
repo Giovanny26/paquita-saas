@@ -49,7 +49,7 @@ export default function Dashboard() {
             <span className="text-purple-400 text-sm mt-4 block">1 crédito / imagen</span>
           </div>
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 hover:border-purple-500/50 transition cursor-pointer">
+          <div onClick={() => navigate('/image-to-image')} className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 hover:border-purple-500/50 transition cursor-pointer">
             <div className="text-4xl mb-4">✏️</div>
             <h3 className="text-lg font-semibold mb-2">Image to Image</h3>
             <p className="text-zinc-400 text-sm">

@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import TextToImage from "./pages/TextToImage";
+import ImageToImage from "./pages/ImageToImage";
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
@@ -24,7 +25,6 @@ export default function App() {
             </PrivateRoute>
           }
         />
-        <Route path="*" element={<Navigate to="/login" />} />
         <Route
           path="/text-to-image"
           element={
@@ -33,6 +33,15 @@ export default function App() {
             </PrivateRoute>
           }
         />
+        <Route
+          path="/image-to-image"
+          element={
+            <PrivateRoute>
+              <ImageToImage />
+            </PrivateRoute>
+          }
+        />
+        <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </BrowserRouter>
   );

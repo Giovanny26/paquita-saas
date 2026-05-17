@@ -94,7 +94,13 @@ export const generateImageToImage = async (req: Request, res: Response) => {
       return res.status(402).json({ error: "Créditos insuficientes" });
     }
 
-    const result = (await imageToImage(prompt, inputImageUrl, isNsfw)) as any;
+    // Route to NSFW or SFW pipeline
+    console.log("isNsfw:", isNsfw);
+    console.log("user plan:", user.plan);
+
+    const result = isNsfw
+      ? ((await imageToImageNsfw(prompt, inputImageUrl)) as any)
+      : ((await imageToImage(prompt, inputImageUrl, isNsfw)) as any);
     const imageUrl = result?.images?.[0]?.url || result?.image?.url;
 
     const generation = await prisma.generation.create({
