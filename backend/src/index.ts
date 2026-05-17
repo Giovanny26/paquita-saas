@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
 import generationRoutes from './routes/generation';
 import avatarRoutes from './routes/avatar';
+import { testFluxNsfw } from './services/falService';
+
 
 
 dotenv.config();
@@ -20,6 +22,15 @@ app.use('/api/auth', authRoutes);
 app.use('/api/generation', generationRoutes);
 app.use('/api/avatar', avatarRoutes);
 
+app.get('/test-flux', async (req, res) => {
+  try {
+    const result = await testFluxNsfw();
+    res.json(result);
+  } catch (error: any) {
+    console.log('ERROR:', JSON.stringify(error.body, null, 2));
+    res.status(500).json({ error: error.body });
+  }
+});
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'Paquita API running' });

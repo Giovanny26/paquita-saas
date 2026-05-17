@@ -6,13 +6,32 @@ fal.config({
 
 // Text to Image
 export const textToImage = async (prompt: string, isNsfw: boolean = false) => {
-  const result = await fal.subscribe('fal-ai/qwen-image-2/pro/text-to-image', {
+  console.log('falService - enable_safety_checker:', !isNsfw);
+  
+  try {
+    const result = await fal.subscribe('fal-ai/qwen-image-2/pro/text-to-image', {
+      input: {
+        prompt,
+        enable_safety_checker: !isNsfw,
+        num_images: 1,
+        output_format: 'png',
+      } as any,
+    });
+    return result.data;
+  } catch (error: any) {
+    console.log('FAL ERROR DETAIL:', JSON.stringify(error.body, null, 2));
+    throw error;
+  }
+};
+
+export const testFluxNsfw = async () => {
+  const result = await fal.subscribe('fal-ai/flux-lora', {
     input: {
-      prompt,
-      enable_safety_checker: !isNsfw,
+      prompt: 'nude woman standing on tropical beach, full body, photorealistic, 8k, highly detailed, natural lighting, anatomically correct',
+      enable_safety_checker: false,
+      num_images: 1,
     } as any,
   });
-
   return result.data;
 };
 

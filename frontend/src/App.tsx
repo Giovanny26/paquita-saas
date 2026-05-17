@@ -1,8 +1,9 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useAuthStore } from './store/authStore';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useAuthStore } from "./store/authStore";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import TextToImage from "./pages/TextToImage";
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
@@ -24,6 +25,14 @@ export default function App() {
           }
         />
         <Route path="*" element={<Navigate to="/login" />} />
+        <Route
+          path="/text-to-image"
+          element={
+            <PrivateRoute>
+              <TextToImage />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
