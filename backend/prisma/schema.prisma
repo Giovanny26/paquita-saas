@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String
+  name          String?
+  plan          Plan     @default(FREE)
+  credits       Int      @default(10)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  avatar        Avatar?
+  generations   Generation[]
+}
+
+model Avatar {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  imageUrl    String
+  prompt      String
+  options     Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Generation {
+  id          String         @id @default(cuid())
+  userId      String
+  type        GenerationType
+  prompt      String
+  imageUrl    String?
+  videoUrl    String?
+  inputImages Json?
+  isNsfw      Boolean        @default(false)
+  creditsCost Int
+  status      JobStatus      @default(PENDING)
+  createdAt   DateTime       @default(now())
+
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Plan {
+  FREE
+  BASIC
+  PRO
+}
+
+enum GenerationType {
+  TEXT_TO_IMAGE
+  IMAGE_TO_IMAGE
+  IMAGE_TO_VIDEO
+}
+
+enum JobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
