@@ -1,63 +1,24 @@
 import { Request, Response } from 'express';
-import prisma from '../lib/prisma';
+import { prisma } from '../lib/prisma';
+import { ApiError } from '../types';
 
-export async function getJobById(req: Request, res: Response) {
-  try {
-    const userId = req.userId!;
-    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+export const getJobById = async (req: Request, res: Response) => {
+  const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+  if (!id) throw new ApiError(400, 'ID inválido');
 
-    if (!id) {
-      return res.status(400).json({
-        error: 'Invalid job id',
-      });
-    }
+  const job = await prisma.job.findUnique({ where: { id } });
+  if (!job) throw new ApiError(404, 'Job no encontrado');
+  if (job.userId !== req.userId) throw new ApiError(403, 'Forbidden');
 
-    const job = await prisma.job.findUnique({
-      where: { id }
-    });
+  res.json(job);
+};
 
-    if (!job) {
-      return res.status(404).json({
-        error: 'Job not found',
-      });
-    }
+export const listMyJobs = async (req: Request, res: Response) => {
+  const jobs = await prisma.job.findMany({
+    where: { userId: req.userId },
+    orderBy: { createdAt: 'desc' },
+    take: 20,
+  });
 
-    if (job.userId !== userId) {
-      return res.status(403).json({
-        error: 'Forbidden',
-      });
-    }
-
-    return res.json(job);
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).json({
-      error: 'Failed to fetch job',
-    });
-  }
-}
-
-export async function listMyJobs(req: Request, res: Response) {
-  try {
-    const userId = req.userId!;
-
-    const jobs = await prisma.job.findMany({
-      where: {
-        userId,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-      take: 20,
-    });
-
-    return res.json(jobs);
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).json({
-      error: 'Failed to fetch jobs',
-    });
-  }
-}
+  res.json(jobs);
+};

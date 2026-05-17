@@ -3,11 +3,7 @@ import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
 
-export const authMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -26,7 +22,7 @@ export const authMiddleware = (
     req.userId = decoded.userId;
 
     next();
-  } catch (error) {
+  } catch {
     return res.status(401).json({
       error: 'Token inválido',
     });
