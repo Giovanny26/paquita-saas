@@ -70,12 +70,12 @@ function Toggle({
       <p className="text-xs text-zinc-400 uppercase tracking-wider">{label}</p>
       <button
         onClick={() => onChange(!value)}
-        className={`relative w-12 h-6 rounded-full transition ${value ? 'bg-purple-600' : 'bg-zinc-700'}`}
+        className={`relative w-12 h-6 rounded-full transition-colors duration-200 overflow-hidden ${value ? 'bg-purple-600' : 'bg-zinc-700'}`}
         aria-checked={value}
         role="switch"
       >
         <span
-          className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${value ? 'translate-x-7' : 'translate-x-1'}`}
+          className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${value ? 'translate-x-6' : 'translate-x-0'}`}
         />
       </button>
     </div>

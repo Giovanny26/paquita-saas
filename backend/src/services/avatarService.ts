@@ -32,27 +32,27 @@ const DERIVED_VIEWS: Array<{ kind: AvatarRefKind; prompt: string }> = [
   {
     kind: 'FACE',
     prompt:
-      'extreme close-up headshot, tight crop on face and neck only, camera zoomed in close, same person, professional studio photo, high quality',
+      'extreme close-up headshot, tight crop on face and neck only, looking directly at camera, direct eye contact, neutral expression, same person, professional studio photo, high quality',
   },
   {
     kind: 'HALF_BODY',
     prompt:
-      'medium shot, head to knees visible, three quarter body, same person standing, neutral background, professional studio photo, high quality',
+      'medium shot, head to knees visible, same person standing upright, looking directly at camera, direct eye contact, neutral expression, neutral background, professional studio photo, high quality',
   },
   {
     kind: 'FULL_BODY',
     prompt:
-      'full length portrait, entire body from head to feet visible, same person standing upright, feet on ground, neutral background, professional studio photo, high quality',
+      'full length portrait, entire body from head to feet visible, same person standing upright, looking directly at camera, feet on ground, neutral background, professional studio photo, high quality',
   },
   {
     kind: 'THREE_QUARTER',
     prompt:
-      'full length portrait, entire body from head to feet, body turned 45 degrees, three quarter angle, same person, neutral background, professional studio photo, high quality',
+      'full length portrait, entire body from head to feet, body turned 45 degrees, looking at camera, same person standing, neutral background, professional studio photo, high quality',
   },
   {
     kind: 'PROFILE',
     prompt:
-      'full length side profile, entire body from head to feet, person facing sideways, same person, neutral background, professional studio photo, high quality',
+      'full length side profile, entire body from head to feet, person facing sideways, same person standing, neutral background, professional studio photo, high quality',
   },
 ];
 

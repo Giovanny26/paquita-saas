@@ -67,7 +67,7 @@ export const falProvider = {
       `${options.makeupLevel} makeup`,
       `${options.lighting} lighting`,
       options.artStyle,
-      'half body shot, waist up, neutral background, professional studio photo, high quality',
+      'half body shot, waist up, standing upright, looking directly at camera, neutral expression, arms relaxed, neutral background, professional studio photo, high quality',
     ].join(', ');
 
     const result = await fal.subscribe('fal-ai/qwen-image-2/pro/text-to-image', {
