@@ -44,7 +44,31 @@ export const falProvider = {
   },
 
   generateAvatarFaces: async (options: AvatarOptions): Promise<ProviderImageResult> => {
-    const prompt = `Portrait photo of a ${options.age} year old ${options.ethnicity} woman, ${options.hairColor} ${options.hairStyle} hair, ${options.bodyType} body type, professional photo, high quality, realistic, neutral background, face only`;
+    const genderWord =
+      options.gender === 'masculine'
+        ? 'man'
+        : options.gender === 'androgynous'
+          ? 'androgynous person'
+          : 'woman';
+    const bangsPart = options.hasBangs
+      ? `${options.hairLength} ${options.hairStyle} ${options.hairColor} hair with bangs`
+      : `${options.hairLength} ${options.hairStyle} ${options.hairColor} hair`;
+    const prompt = [
+      `Portrait photo of a ${options.age} year old ${options.ethnicity} ${genderWord}`,
+      `${options.skinTone} skin`,
+      `${options.faceShape} face shape`,
+      `${options.eyeShape} ${options.eyeColor} eyes`,
+      `${options.eyebrows} eyebrows`,
+      `${options.noseShape} nose`,
+      `${options.lips} lips`,
+      bangsPart,
+      `${options.bodyType} build`,
+      `${options.fashionStyle} style`,
+      `${options.makeupLevel} makeup`,
+      `${options.lighting} lighting`,
+      options.artStyle,
+      'professional photo, high quality, neutral background, face only',
+    ].join(', ');
 
     const result = await fal.subscribe('fal-ai/qwen-image-2/text-to-image', {
       input: {

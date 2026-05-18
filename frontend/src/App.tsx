@@ -5,6 +5,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import TextToImage from './pages/TextToImage';
 import ImageToImage from './pages/ImageToImage';
+import Avatar from './pages/Avatar';
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
@@ -38,6 +39,14 @@ export default function App() {
           element={
             <PrivateRoute>
               <ImageToImage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/avatar"
+          element={
+            <PrivateRoute>
+              <Avatar />
             </PrivateRoute>
           }
         />

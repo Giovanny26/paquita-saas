@@ -1,25 +1,71 @@
 import { Request, Response } from 'express';
 import { ApiError } from '../types';
 import { avatarService } from '../services/avatarService';
+import type { AvatarOptions } from '../types';
 
 export const getAvatarOptions = (_req: Request, res: Response) => {
   res.json(avatarService.getOptions());
 };
 
-export const generateAvatarPreviews = async (req: Request, res: Response) => {
-  const { ethnicity, hairColor, hairStyle, bodyType, age } = req.body;
-  if (!ethnicity || !hairColor || !hairStyle || !bodyType || !age) {
-    throw new ApiError(400, 'Todas las opciones son requeridas');
+function validateAvatarOptions(body: Record<string, unknown>): AvatarOptions {
+  const required = [
+    'gender',
+    'age',
+    'ethnicity',
+    'skinTone',
+    'faceShape',
+    'eyeShape',
+    'eyeColor',
+    'noseShape',
+    'lips',
+    'eyebrows',
+    'hairLength',
+    'hairStyle',
+    'hairColor',
+    'bodyType',
+    'height',
+    'fashionStyle',
+    'makeupLevel',
+    'lighting',
+    'artStyle',
+  ];
+  for (const field of required) {
+    if (!body[field]) throw new ApiError(400, `Campo requerido: ${field}`);
   }
+  return {
+    gender: body.gender as string,
+    age: body.age as string,
+    ethnicity: body.ethnicity as string,
+    skinTone: body.skinTone as string,
+    faceShape: body.faceShape as string,
+    eyeShape: body.eyeShape as string,
+    eyeColor: body.eyeColor as string,
+    noseShape: body.noseShape as string,
+    lips: body.lips as string,
+    eyebrows: body.eyebrows as string,
+    hairLength: body.hairLength as string,
+    hairStyle: body.hairStyle as string,
+    hairColor: body.hairColor as string,
+    hasBangs: Boolean(body.hasBangs),
+    bodyType: body.bodyType as string,
+    height: body.height as string,
+    fashionStyle: body.fashionStyle as string,
+    makeupLevel: body.makeupLevel as string,
+    lighting: body.lighting as string,
+    artStyle: body.artStyle as string,
+  };
+}
 
-  const result = await avatarService.generatePreviews(req.userId, {
-    ethnicity,
-    hairColor,
-    hairStyle,
-    bodyType,
-    age,
-  });
+export const generateAvatarPreviews = async (req: Request, res: Response) => {
+  const options = validateAvatarOptions(req.body as Record<string, unknown>);
+  const result = await avatarService.generatePreviews(req.userId, options);
   res.json(result);
+};
+
+export const createAvatarPack = async (req: Request, res: Response) => {
+  const options = validateAvatarOptions(req.body as Record<string, unknown>);
+  const result = await avatarService.createPack(req.userId, options);
+  res.status(202).json(result);
 };
 
 export const saveAvatar = async (req: Request, res: Response) => {
