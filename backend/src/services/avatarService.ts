@@ -31,24 +31,28 @@ type OptionItem = { value: string; label: string };
 const DERIVED_VIEWS: Array<{ kind: AvatarRefKind; prompt: string }> = [
   {
     kind: 'FACE',
-    prompt: 'extreme close-up portrait, face only, same person, professional photo, high quality',
+    prompt:
+      'extreme close-up headshot, tight crop on face and neck only, camera zoomed in close, same person, professional studio photo, high quality',
   },
   {
     kind: 'HALF_BODY',
-    prompt: 'half body portrait, waist up, same person, professional photo, high quality',
+    prompt:
+      'medium shot, head to knees visible, three quarter body, same person standing, neutral background, professional studio photo, high quality',
   },
   {
     kind: 'FULL_BODY',
-    prompt: 'full body standing portrait, same person, professional photo, high quality',
+    prompt:
+      'full length portrait, entire body from head to feet visible, same person standing upright, feet on ground, neutral background, professional studio photo, high quality',
   },
   {
     kind: 'THREE_QUARTER',
     prompt:
-      'three quarter view portrait, slightly turned, same person, professional photo, high quality',
+      'full length portrait, entire body from head to feet, body turned 45 degrees, three quarter angle, same person, neutral background, professional studio photo, high quality',
   },
   {
     kind: 'PROFILE',
-    prompt: 'side profile portrait, same person, professional photo, high quality',
+    prompt:
+      'full length side profile, entire body from head to feet, person facing sideways, same person, neutral background, professional studio photo, high quality',
   },
 ];
 
@@ -213,7 +217,7 @@ export const avatarService = {
         userId,
         type: 'AVATAR_PACK',
         status: 'PENDING',
-        payload: options as Prisma.InputJsonValue,
+        payload: options as unknown as Prisma.InputJsonValue,
       },
     });
 
@@ -234,13 +238,13 @@ export const avatarService = {
         where: { userId },
         update: {
           imageUrl: primaryUrl,
-          options: options as Prisma.InputJsonValue,
+          options: options as unknown as Prisma.InputJsonValue,
           prompt: JSON.stringify(options),
         },
         create: {
           userId,
           imageUrl: primaryUrl,
-          options: options as Prisma.InputJsonValue,
+          options: options as unknown as Prisma.InputJsonValue,
           prompt: JSON.stringify(options),
         },
       });
