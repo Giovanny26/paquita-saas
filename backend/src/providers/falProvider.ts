@@ -70,7 +70,7 @@ export const falProvider = {
       'professional photo, high quality, neutral background, face only',
     ].join(', ');
 
-    const result = await fal.subscribe('fal-ai/qwen-image-2/text-to-image', {
+    const result = await fal.subscribe('fal-ai/qwen-image-2/pro/text-to-image', {
       input: {
         prompt,
         num_images: 4,

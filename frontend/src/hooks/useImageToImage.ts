@@ -70,10 +70,8 @@ export function useImageToImage(): UseImageToImageReturn {
       await fetchMe();
     } catch (err: unknown) {
       const msg =
-        err instanceof Error
-          ? err.message
-          : ((err as { response?: { data?: { error?: string } } })?.response?.data?.error ??
-            'Error generando imagen');
+        (err as { response?: { data?: { error?: string } } })?.response?.data?.error ??
+        'Error generando imagen';
       setError(msg);
     } finally {
       setLoading(false);

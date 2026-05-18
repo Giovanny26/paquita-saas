@@ -30,7 +30,9 @@ function validateAvatarOptions(body: Record<string, unknown>): AvatarOptions {
     'artStyle',
   ];
   for (const field of required) {
-    if (!body[field]) throw new ApiError(400, `Campo requerido: ${field}`);
+    if (body[field] === undefined || body[field] === null || body[field] === '') {
+      throw new ApiError(400, `Campo requerido: ${field}`);
+    }
   }
   return {
     gender: body.gender as string,

@@ -1,4 +1,4 @@
-import { client } from './client';
+import client from './client';
 import type { AvatarOptions, Avatar, Job } from '../types';
 
 type OptionItem = { value: string; label: string };

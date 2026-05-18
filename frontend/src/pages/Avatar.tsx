@@ -1,20 +1,28 @@
+import { useState } from 'react';
 import { useAuthStore } from '../store/authStore';
 import { PageHeader } from '../components/PageHeader';
 import { useAvatarCreator, PERSONALITY_PRESETS } from '../hooks/useAvatarCreator';
 import type { AvatarOptions, AvatarRef } from '../types';
 
 const REF_LABELS: Record<string, string> = {
-  PRIMARY: 'Primary',
-  FACE: 'Close-up',
-  HALF_BODY: 'Half Body',
-  FULL_BODY: 'Full Body',
-  THREE_QUARTER: 'Three Quarter',
-  PROFILE: 'Profile',
+  PRIMARY: 'Principal',
+  FACE: 'Primer plano',
+  HALF_BODY: 'Medio cuerpo',
+  FULL_BODY: 'Cuerpo completo',
+  THREE_QUARTER: 'Tres cuartos',
+  PROFILE: 'Perfil',
 };
 
-const STEPS = ['Identity', 'Face', 'Hair & Body', 'Style'];
+const PRESET_DESCRIPTIONS: Record<string, string> = {
+  cute_latina: 'Latina, cabello ondulado oscuro, look natural',
+  blonde_influencer: 'Caucásica, rubia, estilo editorial glamuroso',
+  gamer_girl: 'Asiática, flequillo, estética anime',
+  goth_girl: 'Piel muy clara, cabello negro, look dramático',
+  elegant_model: 'Mixta, castaño cobrizo, estilo editorial elegante',
+};
 
-// Generic chip selector
+const STEPS = ['Identidad', 'Rasgos', 'Cabello y cuerpo', 'Estilo'];
+
 function ChipSelector<T extends string>({
   options,
   value,
@@ -76,9 +84,9 @@ function Toggle({
 
 const IDENTITY_OPTIONS = {
   gender: [
-    { value: 'feminine', label: 'Feminine' },
-    { value: 'masculine', label: 'Masculine' },
-    { value: 'androgynous', label: 'Androgynous' },
+    { value: 'feminine', label: 'Femenino' },
+    { value: 'masculine', label: 'Masculino' },
+    { value: 'androgynous', label: 'Andrógino' },
   ],
   age: [
     { value: '18-22', label: '18-22' },
@@ -89,133 +97,133 @@ const IDENTITY_OPTIONS = {
   ],
   ethnicity: [
     { value: 'latina', label: 'Latina' },
-    { value: 'caucasian', label: 'Caucasian' },
-    { value: 'asian', label: 'Asian' },
-    { value: 'african', label: 'African' },
-    { value: 'middle_eastern', label: 'Middle Eastern' },
-    { value: 'mixed', label: 'Mixed' },
+    { value: 'caucasian', label: 'Caucásica' },
+    { value: 'asian', label: 'Asiática' },
+    { value: 'african', label: 'Africana' },
+    { value: 'middle_eastern', label: 'Medio Oriente' },
+    { value: 'mixed', label: 'Mixta' },
   ],
   skinTone: [
-    { value: 'very_light', label: 'Very Light' },
-    { value: 'light', label: 'Light' },
-    { value: 'medium', label: 'Medium' },
-    { value: 'tan', label: 'Tan' },
-    { value: 'dark', label: 'Dark' },
-    { value: 'very_dark', label: 'Very Dark' },
+    { value: 'very_light', label: 'Muy claro' },
+    { value: 'light', label: 'Claro' },
+    { value: 'medium', label: 'Medio' },
+    { value: 'tan', label: 'Bronceado' },
+    { value: 'dark', label: 'Oscuro' },
+    { value: 'very_dark', label: 'Muy oscuro' },
   ],
 };
 
 const FACE_OPTIONS = {
   faceShape: [
-    { value: 'oval', label: 'Oval' },
-    { value: 'round', label: 'Round' },
-    { value: 'square', label: 'Square' },
-    { value: 'heart', label: 'Heart' },
-    { value: 'diamond', label: 'Diamond' },
+    { value: 'oval', label: 'Ovalada' },
+    { value: 'round', label: 'Redonda' },
+    { value: 'square', label: 'Cuadrada' },
+    { value: 'heart', label: 'Corazón' },
+    { value: 'diamond', label: 'Diamante' },
   ],
   eyeShape: [
-    { value: 'almond', label: 'Almond' },
-    { value: 'round', label: 'Round' },
-    { value: 'hooded', label: 'Hooded' },
-    { value: 'monolid', label: 'Monolid' },
-    { value: 'upturned', label: 'Upturned' },
+    { value: 'almond', label: 'Almendra' },
+    { value: 'round', label: 'Redondos' },
+    { value: 'hooded', label: 'Caídos' },
+    { value: 'monolid', label: 'Monopárpado' },
+    { value: 'upturned', label: 'Rasgados' },
   ],
   eyeColor: [
-    { value: 'dark_brown', label: 'Dark Brown' },
-    { value: 'brown', label: 'Brown' },
-    { value: 'hazel', label: 'Hazel' },
-    { value: 'green', label: 'Green' },
-    { value: 'blue', label: 'Blue' },
-    { value: 'gray', label: 'Gray' },
+    { value: 'dark_brown', label: 'Café oscuro' },
+    { value: 'brown', label: 'Café' },
+    { value: 'hazel', label: 'Avellana' },
+    { value: 'green', label: 'Verde' },
+    { value: 'blue', label: 'Azul' },
+    { value: 'gray', label: 'Gris' },
   ],
   noseShape: [
-    { value: 'straight', label: 'Straight' },
-    { value: 'button', label: 'Button' },
-    { value: 'wide', label: 'Wide' },
-    { value: 'narrow', label: 'Narrow' },
-    { value: 'upturned', label: 'Upturned' },
+    { value: 'straight', label: 'Recto' },
+    { value: 'button', label: 'Respingado' },
+    { value: 'wide', label: 'Ancho' },
+    { value: 'narrow', label: 'Estrecho' },
+    { value: 'upturned', label: 'Levantado' },
   ],
   lips: [
-    { value: 'thin', label: 'Thin' },
-    { value: 'medium', label: 'Medium' },
-    { value: 'full', label: 'Full' },
-    { value: 'wide', label: 'Wide' },
+    { value: 'thin', label: 'Finos' },
+    { value: 'medium', label: 'Medianos' },
+    { value: 'full', label: 'Gruesos' },
+    { value: 'wide', label: 'Anchos' },
   ],
   eyebrows: [
-    { value: 'thin', label: 'Thin' },
-    { value: 'medium', label: 'Medium' },
-    { value: 'thick', label: 'Thick' },
-    { value: 'arched', label: 'Arched' },
-    { value: 'straight', label: 'Straight' },
+    { value: 'thin', label: 'Finas' },
+    { value: 'medium', label: 'Medianas' },
+    { value: 'thick', label: 'Gruesas' },
+    { value: 'arched', label: 'Arqueadas' },
+    { value: 'straight', label: 'Rectas' },
   ],
 };
 
 const HAIR_BODY_OPTIONS = {
   hairLength: [
     { value: 'pixie', label: 'Pixie' },
-    { value: 'short', label: 'Short' },
-    { value: 'shoulder', label: 'Shoulder' },
-    { value: 'long', label: 'Long' },
-    { value: 'extra_long', label: 'Extra Long' },
+    { value: 'short', label: 'Corto' },
+    { value: 'shoulder', label: 'A los hombros' },
+    { value: 'long', label: 'Largo' },
+    { value: 'extra_long', label: 'Muy largo' },
   ],
   hairStyle: [
-    { value: 'straight', label: 'Straight' },
-    { value: 'wavy', label: 'Wavy' },
-    { value: 'curly', label: 'Curly' },
-    { value: 'coily', label: 'Coily' },
-    { value: 'braided', label: 'Braided' },
-    { value: 'bun', label: 'Bun' },
-    { value: 'ponytail', label: 'Ponytail' },
+    { value: 'straight', label: 'Liso' },
+    { value: 'wavy', label: 'Ondulado' },
+    { value: 'curly', label: 'Rizado' },
+    { value: 'coily', label: 'Crespo' },
+    { value: 'braided', label: 'Trenzado' },
+    { value: 'bun', label: 'Moño' },
+    { value: 'ponytail', label: 'Coleta' },
   ],
   hairColor: [
-    { value: 'black', label: 'Black' },
-    { value: 'dark_brown', label: 'Dark Brown' },
-    { value: 'brown', label: 'Brown' },
-    { value: 'light_brown', label: 'Light Brown' },
-    { value: 'blonde', label: 'Blonde' },
-    { value: 'platinum', label: 'Platinum' },
-    { value: 'red', label: 'Red' },
-    { value: 'auburn', label: 'Auburn' },
+    { value: 'black', label: 'Negro' },
+    { value: 'dark_brown', label: 'Castaño oscuro' },
+    { value: 'brown', label: 'Castaño' },
+    { value: 'light_brown', label: 'Castaño claro' },
+    { value: 'blonde', label: 'Rubio' },
+    { value: 'platinum', label: 'Platino' },
+    { value: 'red', label: 'Rojo' },
+    { value: 'auburn', label: 'Cobrizo' },
   ],
   bodyType: [
-    { value: 'slim', label: 'Slim' },
-    { value: 'athletic', label: 'Athletic' },
-    { value: 'curvy', label: 'Curvy' },
-    { value: 'petite', label: 'Petite' },
-    { value: 'plus_size', label: 'Plus Size' },
+    { value: 'slim', label: 'Delgada' },
+    { value: 'athletic', label: 'Atlética' },
+    { value: 'curvy', label: 'Curvilínea' },
+    { value: 'petite', label: 'Pequeña' },
+    { value: 'plus_size', label: 'Plus size' },
   ],
   height: [
-    { value: 'petite', label: 'Petite' },
-    { value: 'average', label: 'Average' },
-    { value: 'tall', label: 'Tall' },
+    { value: 'petite', label: 'Baja' },
+    { value: 'average', label: 'Media' },
+    { value: 'tall', label: 'Alta' },
   ],
 };
 
 const STYLE_OPTIONS = {
   fashionStyle: [
     { value: 'casual', label: 'Casual' },
-    { value: 'elegant', label: 'Elegant' },
-    { value: 'sporty', label: 'Sporty' },
+    { value: 'elegant', label: 'Elegante' },
+    { value: 'sporty', label: 'Deportivo' },
     { value: 'streetwear', label: 'Streetwear' },
-    { value: 'bohemian', label: 'Bohemian' },
-    { value: 'professional', label: 'Professional' },
+    { value: 'bohemian', label: 'Bohemio' },
+    { value: 'professional', label: 'Profesional' },
   ],
   makeupLevel: [
-    { value: 'none', label: 'No Makeup' },
+    { value: 'none', label: 'Sin maquillaje' },
     { value: 'natural', label: 'Natural' },
-    { value: 'glam', label: 'Glam' },
-    { value: 'artistic', label: 'Artistic' },
+    { value: 'glam', label: 'Glamuroso' },
+    { value: 'artistic', label: 'Artístico' },
   ],
   lighting: [
     { value: 'natural', label: 'Natural' },
-    { value: 'studio', label: 'Studio' },
-    { value: 'golden_hour', label: 'Golden Hour' },
-    { value: 'dramatic', label: 'Dramatic' },
-    { value: 'soft', label: 'Soft' },
+    { value: 'studio', label: 'Estudio' },
+    { value: 'golden_hour', label: 'Hora dorada' },
+    { value: 'dramatic', label: 'Dramático' },
+    { value: 'soft', label: 'Suave' },
   ],
   artStyle: [
-    { value: 'photorealistic', label: 'Photorealistic' },
-    { value: 'cinematic', label: 'Cinematic' },
+    { value: 'photorealistic', label: 'Fotorrealista' },
+    { value: 'cinematic', label: 'Cinematográfico' },
     { value: 'editorial', label: 'Editorial' },
     { value: 'anime', label: 'Anime' },
   ],
@@ -262,9 +270,7 @@ function AvatarRefCard({ data }: { data: AvatarRef }) {
         alt={REF_LABELS[data.kind] ?? data.kind}
         className="w-full aspect-square object-cover"
       />
-      <p className="text-xs text-zinc-400 text-center py-2">
-        {REF_LABELS[data.kind] ?? data.kind}
-      </p>
+      <p className="text-xs text-zinc-400 text-center py-2">{REF_LABELS[data.kind] ?? data.kind}</p>
     </div>
   );
 }
@@ -288,6 +294,7 @@ function ProcessingScreen({ status }: { status: string | null }) {
 
 export default function Avatar() {
   const user = useAuthStore((s) => s.user);
+  const [mode, setMode] = useState<'presets' | 'custom'>('presets');
   const {
     step,
     options,
@@ -331,13 +338,11 @@ export default function Avatar() {
               6 referencias visuales generadas con consistencia de identidad.
             </p>
           </div>
-
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
             {avatar.avatarRefs.map((avatarRef) => (
               <AvatarRefCard key={avatarRef.id} data={avatarRef} />
             ))}
           </div>
-
           <div className="flex gap-4 justify-center">
             <button
               onClick={resetCreator}
@@ -361,204 +366,176 @@ export default function Avatar() {
     <div className="min-h-screen bg-black text-white">
       <PageHeader title="Avatar Creator" credits={user?.credits} backTo="/dashboard" />
       <main className="max-w-3xl mx-auto px-6 py-10">
-        {/* Presets */}
-        <div className="mb-8">
-          <p className="text-sm text-zinc-400 mb-3">
-            Quick start — choose a preset or customize below
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold mb-2">Crea tu personaje</h2>
+          <p className="text-zinc-400 text-sm">
+            Elige un preset para empezar rápido, o personaliza cada detalle tú mismo.
           </p>
-          <div className="flex flex-wrap gap-3">
-            {PERSONALITY_PRESETS.map((preset) => (
-              <button
-                key={preset.id}
-                onClick={() => applyPreset(preset.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full border text-sm transition ${
-                  activePreset === preset.id
-                    ? 'bg-purple-600/30 border-purple-500 text-purple-300'
-                    : 'bg-zinc-800 border-zinc-700 text-zinc-300 hover:border-zinc-500'
-                }`}
-              >
-                <span>{preset.emoji}</span>
-                <span>{preset.name}</span>
-              </button>
-            ))}
-          </div>
         </div>
 
-        <StepIndicator current={step} total={STEPS.length} />
-
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 mb-6">
-          {step === 1 && (
-            <>
-              <h3 className="text-lg font-semibold mb-5">Identity</h3>
-              <ChipSelector
-                options={IDENTITY_OPTIONS.gender}
-                value={options.gender}
-                onChange={opt('gender')}
-                label="Gender Presentation"
-              />
-              <ChipSelector
-                options={IDENTITY_OPTIONS.age}
-                value={options.age}
-                onChange={opt('age')}
-                label="Age"
-              />
-              <ChipSelector
-                options={IDENTITY_OPTIONS.ethnicity}
-                value={options.ethnicity}
-                onChange={opt('ethnicity')}
-                label="Ethnicity"
-              />
-              <ChipSelector
-                options={IDENTITY_OPTIONS.skinTone}
-                value={options.skinTone}
-                onChange={opt('skinTone')}
-                label="Skin Tone"
-              />
-            </>
-          )}
-
-          {step === 2 && (
-            <>
-              <h3 className="text-lg font-semibold mb-5">Facial Features</h3>
-              <ChipSelector
-                options={FACE_OPTIONS.faceShape}
-                value={options.faceShape}
-                onChange={opt('faceShape')}
-                label="Face Shape"
-              />
-              <ChipSelector
-                options={FACE_OPTIONS.eyeShape}
-                value={options.eyeShape}
-                onChange={opt('eyeShape')}
-                label="Eye Shape"
-              />
-              <ChipSelector
-                options={FACE_OPTIONS.eyeColor}
-                value={options.eyeColor}
-                onChange={opt('eyeColor')}
-                label="Eye Color"
-              />
-              <ChipSelector
-                options={FACE_OPTIONS.noseShape}
-                value={options.noseShape}
-                onChange={opt('noseShape')}
-                label="Nose"
-              />
-              <ChipSelector
-                options={FACE_OPTIONS.lips}
-                value={options.lips}
-                onChange={opt('lips')}
-                label="Lips"
-              />
-              <ChipSelector
-                options={FACE_OPTIONS.eyebrows}
-                value={options.eyebrows}
-                onChange={opt('eyebrows')}
-                label="Eyebrows"
-              />
-            </>
-          )}
-
-          {step === 3 && (
-            <>
-              <h3 className="text-lg font-semibold mb-5">Hair & Body</h3>
-              <ChipSelector
-                options={HAIR_BODY_OPTIONS.hairLength}
-                value={options.hairLength}
-                onChange={opt('hairLength')}
-                label="Hair Length"
-              />
-              <ChipSelector
-                options={HAIR_BODY_OPTIONS.hairStyle}
-                value={options.hairStyle}
-                onChange={opt('hairStyle')}
-                label="Hair Style"
-              />
-              <ChipSelector
-                options={HAIR_BODY_OPTIONS.hairColor}
-                value={options.hairColor}
-                onChange={opt('hairColor')}
-                label="Hair Color"
-              />
-              <Toggle label="Bangs" value={options.hasBangs} onChange={opt('hasBangs')} />
-              <ChipSelector
-                options={HAIR_BODY_OPTIONS.bodyType}
-                value={options.bodyType}
-                onChange={opt('bodyType')}
-                label="Body Type"
-              />
-              <ChipSelector
-                options={HAIR_BODY_OPTIONS.height}
-                value={options.height}
-                onChange={opt('height')}
-                label="Height"
-              />
-            </>
-          )}
-
-          {step === 4 && (
-            <>
-              <h3 className="text-lg font-semibold mb-5">Style & Aesthetic</h3>
-              <ChipSelector
-                options={STYLE_OPTIONS.fashionStyle}
-                value={options.fashionStyle}
-                onChange={opt('fashionStyle')}
-                label="Fashion Style"
-              />
-              <ChipSelector
-                options={STYLE_OPTIONS.makeupLevel}
-                value={options.makeupLevel}
-                onChange={opt('makeupLevel')}
-                label="Makeup"
-              />
-              <ChipSelector
-                options={STYLE_OPTIONS.lighting}
-                value={options.lighting}
-                onChange={opt('lighting')}
-                label="Lighting"
-              />
-              <ChipSelector
-                options={STYLE_OPTIONS.artStyle}
-                value={options.artStyle}
-                onChange={opt('artStyle')}
-                label="Art Style"
-              />
-            </>
-          )}
-        </div>
-
-        {error && (
-          <div className="bg-red-900/20 border border-red-500/30 text-red-400 rounded-xl px-4 py-3 mb-4 text-sm">
-            {error}
-          </div>
-        )}
-
-        <div className="flex justify-between">
+        {/* Mode tabs */}
+        <div className="flex gap-1 mb-8 bg-zinc-900 border border-zinc-800 rounded-xl p-1">
           <button
-            onClick={() => setStep(Math.max(1, step - 1))}
-            disabled={step === 1}
-            className="px-5 py-3 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition"
+            onClick={() => setMode('presets')}
+            className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition ${
+              mode === 'presets' ? 'bg-purple-600 text-white' : 'text-zinc-400 hover:text-white'
+            }`}
           >
-            Anterior
+            Presets rápidos
           </button>
+          <button
+            onClick={() => setMode('custom')}
+            className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition ${
+              mode === 'custom' ? 'bg-purple-600 text-white' : 'text-zinc-400 hover:text-white'
+            }`}
+          >
+            Personalizar
+          </button>
+        </div>
 
-          {step < STEPS.length ? (
-            <button
-              onClick={() => setStep(step + 1)}
-              className="px-5 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-semibold transition"
-            >
-              Siguiente
-            </button>
-          ) : (
+        {mode === 'presets' ? (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+              {PERSONALITY_PRESETS.map((preset) => (
+                <button
+                  key={preset.id}
+                  onClick={() => applyPreset(preset.id)}
+                  className={`flex items-center gap-4 p-4 rounded-2xl border text-left transition ${
+                    activePreset === preset.id
+                      ? 'bg-purple-600/20 border-purple-500'
+                      : 'bg-zinc-900 border-zinc-800 hover:border-zinc-600'
+                  }`}
+                >
+                  <span className="text-4xl shrink-0">{preset.emoji}</span>
+                  <div className="min-w-0">
+                    <p className="font-semibold text-white">{preset.name}</p>
+                    <p className="text-xs text-zinc-400 mt-0.5">
+                      {PRESET_DESCRIPTIONS[preset.id]}
+                    </p>
+                  </div>
+                  {activePreset === preset.id && (
+                    <span className="ml-auto shrink-0 text-purple-400 text-xl">✓</span>
+                  )}
+                </button>
+              ))}
+            </div>
+
+            {error && (
+              <div className="bg-red-900/20 border border-red-500/30 text-red-400 rounded-xl px-4 py-3 mb-4 text-sm">
+                {error}
+              </div>
+            )}
+
             <button
               onClick={createPack}
-              disabled={loading}
-              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-bold transition"
+              disabled={!activePreset || loading}
+              className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl font-bold text-lg transition"
             >
               Generar Avatar Pack — 15 créditos
             </button>
-          )}
-        </div>
+          </>
+        ) : (
+          <>
+            <div className="mb-6">
+              <p className="text-xs text-zinc-500 uppercase tracking-wider mb-2">
+                Partir de un preset
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {PERSONALITY_PRESETS.map((preset) => (
+                  <button
+                    key={preset.id}
+                    onClick={() => applyPreset(preset.id)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs transition ${
+                      activePreset === preset.id
+                        ? 'bg-purple-600/30 border-purple-500 text-purple-300'
+                        : 'bg-zinc-800 border-zinc-700 text-zinc-400 hover:border-zinc-500'
+                    }`}
+                  >
+                    <span>{preset.emoji}</span>
+                    <span>{preset.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <StepIndicator current={step} total={STEPS.length} />
+
+            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 mb-6">
+              {step === 1 && (
+                <>
+                  <h3 className="text-lg font-semibold mb-5">Identidad</h3>
+                  <ChipSelector options={IDENTITY_OPTIONS.gender} value={options.gender} onChange={opt('gender')} label="Presentación de género" />
+                  <ChipSelector options={IDENTITY_OPTIONS.age} value={options.age} onChange={opt('age')} label="Edad" />
+                  <ChipSelector options={IDENTITY_OPTIONS.ethnicity} value={options.ethnicity} onChange={opt('ethnicity')} label="Etnicidad" />
+                  <ChipSelector options={IDENTITY_OPTIONS.skinTone} value={options.skinTone} onChange={opt('skinTone')} label="Tono de piel" />
+                </>
+              )}
+              {step === 2 && (
+                <>
+                  <h3 className="text-lg font-semibold mb-5">Rasgos faciales</h3>
+                  <ChipSelector options={FACE_OPTIONS.faceShape} value={options.faceShape} onChange={opt('faceShape')} label="Forma de cara" />
+                  <ChipSelector options={FACE_OPTIONS.eyeShape} value={options.eyeShape} onChange={opt('eyeShape')} label="Forma de ojos" />
+                  <ChipSelector options={FACE_OPTIONS.eyeColor} value={options.eyeColor} onChange={opt('eyeColor')} label="Color de ojos" />
+                  <ChipSelector options={FACE_OPTIONS.noseShape} value={options.noseShape} onChange={opt('noseShape')} label="Nariz" />
+                  <ChipSelector options={FACE_OPTIONS.lips} value={options.lips} onChange={opt('lips')} label="Labios" />
+                  <ChipSelector options={FACE_OPTIONS.eyebrows} value={options.eyebrows} onChange={opt('eyebrows')} label="Cejas" />
+                </>
+              )}
+              {step === 3 && (
+                <>
+                  <h3 className="text-lg font-semibold mb-5">Cabello y cuerpo</h3>
+                  <ChipSelector options={HAIR_BODY_OPTIONS.hairLength} value={options.hairLength} onChange={opt('hairLength')} label="Largo de cabello" />
+                  <ChipSelector options={HAIR_BODY_OPTIONS.hairStyle} value={options.hairStyle} onChange={opt('hairStyle')} label="Estilo de cabello" />
+                  <ChipSelector options={HAIR_BODY_OPTIONS.hairColor} value={options.hairColor} onChange={opt('hairColor')} label="Color de cabello" />
+                  <Toggle label="Flequillo" value={options.hasBangs} onChange={opt('hasBangs')} />
+                  <ChipSelector options={HAIR_BODY_OPTIONS.bodyType} value={options.bodyType} onChange={opt('bodyType')} label="Tipo de cuerpo" />
+                  <ChipSelector options={HAIR_BODY_OPTIONS.height} value={options.height} onChange={opt('height')} label="Altura" />
+                </>
+              )}
+              {step === 4 && (
+                <>
+                  <h3 className="text-lg font-semibold mb-5">Estilo y estética</h3>
+                  <ChipSelector options={STYLE_OPTIONS.fashionStyle} value={options.fashionStyle} onChange={opt('fashionStyle')} label="Estilo de moda" />
+                  <ChipSelector options={STYLE_OPTIONS.makeupLevel} value={options.makeupLevel} onChange={opt('makeupLevel')} label="Maquillaje" />
+                  <ChipSelector options={STYLE_OPTIONS.lighting} value={options.lighting} onChange={opt('lighting')} label="Iluminación" />
+                  <ChipSelector options={STYLE_OPTIONS.artStyle} value={options.artStyle} onChange={opt('artStyle')} label="Estilo visual" />
+                </>
+              )}
+            </div>
+
+            {error && (
+              <div className="bg-red-900/20 border border-red-500/30 text-red-400 rounded-xl px-4 py-3 mb-4 text-sm">
+                {error}
+              </div>
+            )}
+
+            <div className="flex justify-between">
+              <button
+                onClick={() => setStep(Math.max(1, step - 1))}
+                disabled={step === 1}
+                className="px-5 py-3 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition"
+              >
+                Anterior
+              </button>
+              {step < STEPS.length ? (
+                <button
+                  onClick={() => setStep(step + 1)}
+                  className="px-5 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-semibold transition"
+                >
+                  Siguiente
+                </button>
+              ) : (
+                <button
+                  onClick={createPack}
+                  disabled={loading}
+                  className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-bold transition"
+                >
+                  Generar Avatar Pack — 15 créditos
+                </button>
+              )}
+            </div>
+          </>
+        )}
       </main>
     </div>
   );

@@ -55,10 +55,10 @@ export default function Dashboard() {
             <span className="text-purple-400 text-sm mt-4 block">1 crédito / imagen</span>
           </div>
 
-          <div
-            onClick={() => navigate('/image-to-video')}
-            className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 hover:border-purple-500/50 transition cursor-pointer"
-          >
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 relative opacity-60 cursor-not-allowed">
+            <span className="absolute top-4 right-4 bg-zinc-700 text-zinc-300 text-xs px-2 py-0.5 rounded-full">
+              Próximamente
+            </span>
             <div className="text-4xl mb-4">🎬</div>
             <h3 className="text-lg font-semibold mb-2">Image to Video</h3>
             <p className="text-zinc-400 text-sm">Anima tus imágenes y crea videos con IA.</p>
